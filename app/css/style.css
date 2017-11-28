@@ -1,0 +1,64 @@
+/*  - 1 - fonts load start
+==================================================================================================== */
+@import url("https://fonts.googleapis.com/css?family=Merienda:400,700|Raleway:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,700,700i");
+body {
+  font-family: 'Roboto', sans-serif; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif; }
+
+/*  - 1 - fonts load end
+==================================================================================================== */
+/*  - 2 - css variables
+==================================================================================================== */
+/*  - 2 - vairables end
+==================================================================================================== */
+/* - 3 - functions using mixins
+==================================================================================================== */
+/*  - 3 - functions end
+==================================================================================================== */
+body {
+  background-color: #fff; }
+
+header {
+  box-shadow: 0px 1px 4px 4px #D35400;
+  width: 100%;
+  text-align: center; }
+  header h1 {
+    padding: 2%; }
+
+#left-sidebar {
+  box-shadow: 0px 1px 4px 4px #2ECC71;
+  float: left;
+  text-align: center;
+  width: 25%; }
+
+#container {
+  float: left;
+  text-align: center;
+  width: 70%; }
+
+#sidebar-right {
+  float: left;
+  width: 5%; }
+
+#footer {
+  box-shadow: 0px 1px 4px 4px #2ECC71;
+  clear: both;
+  height: 50px;
+  width: 100%;
+  text-align: center; }
+
+#left-sidebar, #container, #sidebar-right {
+  min-height: 600px; }
+
+.left-menu {
+  margin: 10%; }
+  .left-menu .form-builder {
+    margin: 2%; }
+
+.form-inline {
+  margin: 5%; }
+
+#idcanvas {
+  border: 1px solid #d3d3d3; }
