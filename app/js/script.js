@@ -12,7 +12,7 @@ function init() {
   //# header
   var headerdom = document.createElement("header");
   var htxth1 = document.createElement("h1");
-  var headertxt = document.createTextNode("Line Graph");
+  var headertxt = document.createTextNode("Scale Graph");
   htxth1.appendChild(headertxt);
   headerdom.appendChild(htxth1);
   document.body.appendChild(headerdom);
@@ -29,7 +29,6 @@ function init() {
 
   var formdom = document.createElement("div");
   formdom.setAttribute("class","form-builder");
-  leftmenudom.appendChild(formdom);
 
   //#form-inline field 1
   var forminlinedom = document.createElement("div");
@@ -94,133 +93,136 @@ function init() {
 }
 
 function drawgraph(){
-  var rmCanvas = document.getElementById("idcanvas");
-  if(rmCanvas != null)
-    rmCanvas.remove();
+  try {
+    var errflag = false;
+    var rmCanvas = document.getElementById("idcanvas");
+    if(rmCanvas != null)
+      rmCanvas.remove();
 
-  var errflag = false;
+    var minusxdom = document.getElementsByName('txtminusxaxis');
+    minusx = minusxdom[0].value;
+    if(minusx == "" || isNaN(minusx) || minusx == null){
+      displayerror(minusxdom[0],"Please enter valid minus -X axis value");
+      errflag = true;
+    }else if(minusx != "" && (minusx < -10|| minusx >= 0)){
+      displayerror(minusxdom[0],"Please enter value between -1 to -10");
+      errflag = true;
+    }else{
+      disableerror(minusxdom[0]);
+    }
 
-  var minusxdom = document.getElementsByName('txtminusxaxis');
-  minusx = minusxdom[0].value;
-  if(minusx == "" || minusx > 0 || minusx == null){
-    if(minusxdom[0].nextElementSibling != null)
-      minusxdom[0].nextElementSibling.remove();
-    var errdiv = document.createElement("div");
-    errdiv.setAttribute("style","color:red; font-size:12px;");
-    var errdivtxt = document.createTextNode("Please enter valid minus -X axis value");
-    errdiv.appendChild(errdivtxt);
-    minusxdom[0].after(errdiv);
-    errflag = true;
-  }else{
-    if(minusxdom[0].nextElementSibling != null)
-      minusxdom[0].nextElementSibling.remove();
-  }
-  var plusxdom = document.getElementsByName('txtplusxaxis');
-  plusx = plusxdom[0].value;
-  if(plusx == "" || plusx == null){
-    if(plusxdom[0].nextElementSibling != null)
-      plusxdom[0].nextElementSibling.remove();
-    var errdiv = document.createElement("div");
-    errdiv.setAttribute("style","color:red; font-size:12px;");
-    var errdivtxt = document.createTextNode("Please enter valid plus X axis value");
-    errdiv.appendChild(errdivtxt);
-    plusxdom[0].after(errdiv);
-    errflag = true;
+    var plusxdom = document.getElementsByName('txtplusxaxis');
+    plusx = plusxdom[0].value;
+    if(plusx == "" || isNaN(plusx) || plusx == null){
+      displayerror(plusxdom[0],"Please enter valid plus X axis value");
+      errflag = true;
+    }else if(plusx != "" && (plusx > 10|| plusx <= 0)){
+      displayerror(plusxdom[0],"Please enter value between 1 to 10");
+      errflag = true;
+    }else {
+      disableerror(plusxdom[0]);
+    }
 
-  }else {
-    if(plusxdom[0].nextElementSibling != null)
-      plusxdom[0].nextElementSibling.remove();
-  }
-  var microticsdom = document.getElementsByName('txtmionrtics');
-  microtics = microticsdom[0].value;
-  if(microtics == "" || microtics > 8 || microtics == null){
-    if(microticsdom[0].nextElementSibling != null)
-      microticsdom[0].nextElementSibling.remove();
-    var errdiv = document.createElement("div");
-    errdiv.setAttribute("style","color:red; font-size:12px;");
-    var errdivtxt = document.createTextNode("Please enter valid micro tics value");
-    errdiv.appendChild(errdivtxt);
-    microticsdom[0].after(errdiv);
-    errflag = true;
-  }else {
-    if(microticsdom[0].nextElementSibling != null)
-      microticsdom[0].nextElementSibling.remove();
-  }
-  console.log(errflag);
-  if(errflag){
-    return false;
-  }
-  minusx = parseInt(minusx);
-  plusx = parseInt(plusx);
-  microtics = parseInt(microtics)+1;
+    var microticsdom = document.getElementsByName('txtmionrtics');
+    microtics = microticsdom[0].value;
+    if(microtics == "" || isNaN(microtics) || microtics == null){
+      displayerror(microticsdom[0],"Please enter valid micro tics value");
+      errflag = true;
+    }else if(microtics != "" && (microtics > 9 || microtics < 1)){
+      displayerror(microticsdom[0],"Please enter value between 1 to 9");
+      errflag = true;
+    }else {
+      disableerror(microticsdom[0]);
+    }
 
-  var withoutminus = Math.abs(minusx);
-  console.log(minusx+"=="+plusx+"=="+withoutminus);
+    if(errflag){
+      return false; //If error stop the execution
+    }
 
+    minusx    = parseInt(minusx);
+    plusx     = parseInt(plusx);
+    microtics = parseInt(microtics)+1;
   // minusx = -2;  plusx = 2;  withoutminus = 2; microtics = 2;
-  console.log(minusx+"=="+plusx+"=="+withoutminus);
-  var linestartfromx = 100;
-  var linestartfromy = linestartfromx;
+    var withoutminus   = Math.abs(minusx);
+    var linestartfromx = 100;
+    var linestartfromy = linestartfromx;
+    var linetotalwidth = 500;
+    var totalscale = (parseInt(withoutminus)+plusx);
+    var calcrange = linetotalwidth / totalscale;
+    var calcmicrorange = calcrange / microtics;
+    var ographarea = document.getElementById("grapharea");
 
-  var linetotalwidth = 500;
-  var totalscale = (parseInt(withoutminus)+plusx);
-  console.log(linetotalwidth);
-  console.log(totalscale);
-  var calcrange = linetotalwidth / totalscale;
-  console.log(calcrange);
+    //# canvas tag
+    var objCanvas = document.createElement("canvas");
+    objCanvas.setAttribute("id","idcanvas");
+    objCanvas.setAttribute("width","700");
+    objCanvas.setAttribute("height","500");
+    ographarea.appendChild(objCanvas);
 
-  var calcmicrorange = calcrange / microtics;
-  console.log(calcmicrorange);
+    var objCanvas = document.getElementById("idcanvas");
+    var baseline = objCanvas.getContext("2d");
+    baseline.beginPath();
+    baseline.moveTo(linestartfromx, linestartfromy);
+    baseline.lineTo(linestartfromx+linetotalwidth, linestartfromx);
+    baseline.lineWidth = 2;
+    baseline.stroke();
 
-  var ographarea = document.getElementById("grapharea");
-  console.log(ographarea);
-  //# canvas tag
-  var objCanvas = document.createElement("canvas");
-  objCanvas.setAttribute("id","idcanvas");
-  objCanvas.setAttribute("width","700");
-  objCanvas.setAttribute("height","500");
-  ographarea.appendChild(objCanvas);
-  console.log(objCanvas);
+    var runningpointx = 100;
+    //var i=0;
+    for(var i=minusx; i<=plusx;i++){
+        var runningmicrox = runningpointx;
 
-  var objCanvas = document.getElementById("idcanvas");
-  var baseline = objCanvas.getContext("2d");
-  baseline.beginPath();
-  baseline.moveTo(linestartfromx, linestartfromy);
-  baseline.lineTo(linestartfromx+linetotalwidth, linestartfromx);
-  baseline.lineWidth = 2;
-  baseline.stroke();
+        for(j=1; j<microtics;j++){
+          if(i == plusx)
+            continue;
+          runningmicrox = runningmicrox+calcmicrorange;
+          var microline = objCanvas.getContext("2d");
+          microline.beginPath();
+          microline.moveTo(runningmicrox, 100);
+          microline.lineTo(runningmicrox, 110);
+          microline.lineWidth = 1;
+          microline.stroke();
+        }
+        var plotline = objCanvas.getContext("2d");
+        plotline.beginPath();
+        plotline.moveTo(runningpointx, 100);
+        if(i == 0){
+          plotline.lineTo(runningpointx, 140);
+        }else {
+          plotline.lineTo(runningpointx, 120);
+        }
+        plotline.lineWidth = 1;
+        plotline.stroke();
 
-  var runningpointx = 100;
-  //var i=0;
-  for(var i=minusx; i<=plusx;i++){
-      var runningmicrox = runningpointx;
+        plotline.font = "12px";
+        plotline.strokeText(i, runningpointx, 97);
 
-      for(j=1; j<microtics;j++){
-        if(i == plusx)
-          continue;
-        runningmicrox = runningmicrox+calcmicrorange;
-        var microline = objCanvas.getContext("2d");
-        microline.beginPath();
-        microline.moveTo(runningmicrox, 100);
-        microline.lineTo(runningmicrox, 110);
-        microline.lineWidth = 1;
-        microline.stroke();
-      }
-      // console.log(runningpointx);
-      var plotline = objCanvas.getContext("2d");
-      plotline.beginPath();
-      plotline.moveTo(runningpointx, 100);
-      if(i == 0){
-        plotline.lineTo(runningpointx, 140);
-      }else {
-        plotline.lineTo(runningpointx, 120);
-      }
-      plotline.lineWidth = 1;
-      plotline.stroke();
+        runningpointx = runningpointx+calcrange;
+    }
+  } catch (err) {
+    document.write("Error in drawgraph function : "+err);
+  }
+}
 
-      plotline.font = "12px Verdana";
-      plotline.strokeText(i, runningpointx, 97);
-      console.log(i);
-      runningpointx = runningpointx+calcrange;
+function displayerror(dom,msg){
+  try {
+    if(dom.nextElementSibling != null)
+      dom.nextElementSibling.remove();
+    var errdiv = document.createElement("div");
+    errdiv.setAttribute("class","errorcls");
+    var errdivtxt = document.createTextNode(msg);
+    errdiv.appendChild(errdivtxt);
+    dom.after(errdiv);
+  } catch (err) {
+    document.write("Error in displayerror function: "+err);
+  }
+}
+
+function disableerror(dom) {
+  try {
+    if(dom.nextElementSibling != null)
+      dom.nextElementSibling.remove();
+  } catch (err) {
+    document.write("Error in disableerror function: "+err);
   }
 }
